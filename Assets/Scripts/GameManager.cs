@@ -6,6 +6,8 @@ using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
+    private int MAX_NUMBER_OF_MERGES = 4;
+    
     private InputSystem_Actions _inputActions;
 
     private int _currentPoints = 0;
@@ -29,13 +31,27 @@ public class GameManager : MonoBehaviour
         _inputActions.UI.Quit.performed += OnQuit;
 
         CollisionDetector.OnTableCollided += HandleOnTableCollided;
-        CollisionDetector.OnTableUncollided += HandleOnTableUncollided; //da eliminare?
         CheckSimilarCollision.OnSimilarCollided += HandleOnSimilarCollided;
         DestroyOnFall.OnFall += HandleOnFall;
         
         pointTrackerText.text = "0";
     }
-
+    
+    private void HandleOnTableCollided(GameObject obj)
+    {
+        if (_placedPrimitive != null)
+        {
+            if (!_placedPrimitive.GetComponent<BlockStats>().OnTable)
+            {
+                _placedPrimitive.GetComponent<BlockStats>().OnTable = true;
+                _placedOnTable.Add(_placedPrimitive);
+                _currentPoints += _placedPrimitive.GetComponent<BlockStats>().blockStats.Value;
+            }
+        }
+        
+        pointTrackerText.text  = $"{_currentPoints}";
+    }
+    
     private void HandleOnFall(GameObject obj)
     {
         _currentPoints -= obj.GetComponent<BlockStats>().blockStats.Value;
@@ -45,27 +61,38 @@ public class GameManager : MonoBehaviour
 
     private void HandleOnSimilarCollided(GameObject obj1, GameObject obj2)
     {
+        GameObject biggerObj = null;
+        GameObject smallerObj = null;
         //randomly merge the two
-        _placedOnTable.Remove(obj2); //remove this one from the list
-        obj1.GetComponent<BlockStats>().blockStats.Value *= 2; //double the value of the first one
-        Destroy(obj2); //destroy the second one
-        
-    }
-
-    private void HandleOnTableCollided(GameObject obj)
-    {
-        if (!_placedPrimitive.GetComponent<BlockStats>().OnTable)
+        if (obj1.GetComponent<BlockStats>().blockStats.Value >= obj2.GetComponent<BlockStats>().blockStats.Value)
         {
-            _placedPrimitive.GetComponent<BlockStats>().OnTable = true;
-            _placedOnTable.Add(_placedPrimitive);
-            _currentPoints += _placedPrimitive.GetComponent<BlockStats>().blockStats.Value;
+            biggerObj = obj1;
+            smallerObj = obj2;
         }
-        pointTrackerText.text  = $"{_currentPoints}";
-    }
-    
-    private void HandleOnTableUncollided(GameObject obj)
-    {
-       //obj.GetComponent<BlockStats>().OnTable = false;
+        else
+        {
+            biggerObj = obj2;
+            smallerObj = obj1;
+        }
+        biggerObj.GetComponent<BlockStats>().blockStats.Value += smallerObj.GetComponent<BlockStats>().blockStats.Value; //add the value of the smaller one to the bigger one;
+        biggerObj.GetComponent<Transform>().position = 
+            new Vector3(
+                (biggerObj.transform.position.x + smallerObj.transform.position.x)*0.5f, 
+                (biggerObj.transform.position.y + smallerObj.transform.position.y)*0.5f, 
+                (biggerObj.transform.position.z + smallerObj.transform.position.z)*0.5f
+            );
+        biggerObj.GetComponent<Transform>().localScale *= 1.2f;
+        biggerObj.GetComponent<MeshRenderer>().material.color = GetRandomColorForPrimitive(); //change color
+        biggerObj.GetComponent<BlockStats>().Merges++;
+        
+        _placedOnTable.Remove(smallerObj); //remove this one from the list
+        Destroy(smallerObj); //destroy the second one
+
+        if (biggerObj.GetComponent<BlockStats>().Merges > MAX_NUMBER_OF_MERGES)
+        {
+            _placedOnTable.Remove(biggerObj); //remove this one from the list
+            Destroy(biggerObj); //destroy the second one
+        }
     }
     
     private void OnDisable()
@@ -120,6 +147,20 @@ public class GameManager : MonoBehaviour
         _previewObject.transform.position = _nextShapePreviewPos;
     }
 
+    private Color GetRandomColorForPrimitive()
+    {
+        //Control randomness
+        Color randomColor = Random.ColorHSV();
+
+        float H, S, V;
+        Color.RGBToHSV(randomColor, out H, out S, out V);
+        S = .8f;
+        V = .8f;
+
+        randomColor = Color.HSVToRGB(H, S, V);
+        return randomColor;
+    }
+    
     private void CreateNewBlock(SBlockStats blockStats, RaycastHit hit)
     {
         _placedPrimitive = GameObject.CreatePrimitive(_primitiveToPlace.PrimitiveType);
@@ -130,17 +171,7 @@ public class GameManager : MonoBehaviour
         _placedPrimitive.transform.rotation = Random.rotation;
                 
         _placedPrimitive.AddComponent<Rigidbody>();
-                
-        //Control randomness
-        Color randomColor = Random.ColorHSV();
-
-        float H, S, V;
-        Color.RGBToHSV(randomColor, out H, out S, out V);
-        S = .8f;
-        V = .8f;
-
-        randomColor = Color.HSVToRGB(H, S, V);
-        _placedPrimitive.GetComponent<MeshRenderer>().material.color = randomColor;
+        _placedPrimitive.GetComponent<MeshRenderer>().material.color = GetRandomColorForPrimitive();
                     
         //load a texture from assets
         //Texture texture = Resources.Load<Texture>("Textures/wood_texture");
