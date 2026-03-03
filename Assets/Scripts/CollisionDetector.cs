@@ -3,22 +3,21 @@ using UnityEngine;
 public class CollisionDetector : MonoBehaviour
 {
     private int collisions = 0;
-
+    public static event System.Action<GameObject> OnTableCollided;
+    public static event System.Action<GameObject> OnTableUncollided;
+    
     private void OnCollisionEnter(Collision collision)
     {
         collisions++;
+        OnTableCollided?.Invoke(collision.gameObject);
         Debug.Log($"Collisions:{collisions}");
     }
 
     private void OnCollisionExit(Collision collision)
     {
         collisions--;
+        OnTableUncollided?.Invoke(collision.gameObject);
         Debug.Log($"Collisions:{collisions}");
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
