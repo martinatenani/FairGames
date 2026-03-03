@@ -10,14 +10,12 @@ public class CollisionDetector : MonoBehaviour
     {
         collisions++;
         OnTableCollided?.Invoke(collision.gameObject);
-        Debug.Log($"Collisions:{collisions}");
     }
 
     private void OnCollisionExit(Collision collision)
     {
         collisions--;
         OnTableUncollided?.Invoke(collision.gameObject);
-        Debug.Log($"Collisions:{collisions}");
     }
 
     // Update is called once per frame
