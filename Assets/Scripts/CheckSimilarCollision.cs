@@ -14,7 +14,8 @@ public class CheckSimilarCollision : MonoBehaviour
     {
         if (collision.gameObject.name == _myName)
         {
-            OnSimilarCollided?.Invoke(this.gameObject, collision.gameObject);
+            if(GetInstanceID()< collision.gameObject.GetInstanceID()) //evitare che si chiamino a vicenda
+                OnSimilarCollided?.Invoke(this.gameObject, collision.gameObject);
         }
     }
 

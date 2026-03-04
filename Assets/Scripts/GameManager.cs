@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     private GameObject _placedPrimitive;
     private List<GameObject> _placedOnTable = new List<GameObject>();
     
-    private Vector3 _nextShapePreviewPos = new Vector3(-7, 1, 1);
+    private Vector3 _nextShapePreviewPos = new Vector3(-15, 1, 1);
 
     private void Awake()
     {
@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         {
             if (!_placedPrimitive.GetComponent<BlockStats>().OnTable)
             {
+                Debug.Log("OnTableCollided");
                 _placedPrimitive.GetComponent<BlockStats>().OnTable = true;
                 _placedOnTable.Add(_placedPrimitive);
                 _currentPoints += _placedPrimitive.GetComponent<BlockStats>().blockStats.Value;
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
             smallerObj = obj1;
         }
         biggerObj.GetComponent<BlockStats>().blockStats.Value += smallerObj.GetComponent<BlockStats>().blockStats.Value; //add the value of the smaller one to the bigger one;
+        Debug.Log("Object value after merge: " + biggerObj.GetComponent<BlockStats>().blockStats.Value);
         biggerObj.GetComponent<Transform>().position = 
             new Vector3(
                 (biggerObj.transform.position.x + smallerObj.transform.position.x)*0.5f, 
