@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CannonBird
 {
     public class BrickManager : MonoBehaviour
     {
         public static event System.Action OnDestroyed;
+        private bool floatAway = false;
+        private GameObject _explosionPrefab;
 
         private void OnCollisionEnter(Collision collision)
         {
@@ -23,6 +26,61 @@ namespace CannonBird
                     } //to avoid using layers
                 }
                 Destroy(gameObject);
+            }else if (collision.gameObject.CompareTag("Bomb"))
+            {
+                Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
+                    new Vector3(.5f, 10f, .5f),
+                    Quaternion.identity);
+                Instantiate(_explosionPrefab);
+                foreach (Collider c in hits)
+                {
+                    if (c.TryGetComponent(out Rigidbody rb))
+                    {
+                        rb.isKinematic = false;
+                        rb.AddExplosionForce(100f,transform.position+new Vector3(0,5,0),10f);
+                    } //to avoid using layers
+                }
+                Destroy(gameObject);
+            }else if(collision.gameObject.CompareTag("Shrink"))
+            {
+                Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
+                    new Vector3(.5f, 10f, .5f),
+                    Quaternion.identity);
+                foreach (Collider c in hits)
+                {
+                    if (c.TryGetComponent(out Rigidbody rb))
+                    {
+                        rb.isKinematic = true;
+                    } //to avoid using layers
+                }
+                gameObject.transform.localScale += new Vector3(-0.1f,-0.1f,-0.1f);
+
+                if (gameObject.transform.localScale.x < 0.3f)
+                {
+                    Destroy(gameObject);
+                }
+            }else if(collision.gameObject.CompareTag("Float"))
+            {
+                Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
+                    new Vector3(.5f, 10f, .5f),
+                    Quaternion.identity);
+                
+                foreach (Collider c in hits)
+                {
+                    if (c.TryGetComponent(out Rigidbody rb))
+                    {
+                        rb.isKinematic = true;
+                        floatAway = true;
+                    } //to avoid using layers
+                }
+            }
+        }
+
+        private void Update()
+        {
+            if (floatAway)
+            {
+                transform.position += transform.up * 0.001f;
             }
         }
 

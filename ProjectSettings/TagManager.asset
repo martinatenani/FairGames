@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Bullet
   - Brick
+  - Bomb
+  - Shrink
+  - Float
   layers:
   - Default
   - TransparentFX

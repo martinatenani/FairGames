@@ -126,7 +126,6 @@ namespace CannonBird
             }else if (_fireAction.WasReleasedThisFrame())
             {
                 GameObject go = Instantiate(bullet);
-                go.SetActive(true);
                 go.transform.position = fireTransform.position;
                 go.transform.rotation = _cannonParentRotation;
 
