@@ -5,6 +5,8 @@ namespace CannonBird
 {
     public class BrickManager : MonoBehaviour
     {
+        public static event System.Action OnDestroyed;
+
         private void OnCollisionEnter(Collision collision)
         {
             if (collision.gameObject.CompareTag("Bullet"))
@@ -22,6 +24,11 @@ namespace CannonBird
                 }
                 Destroy(gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            OnDestroyed?.Invoke();
         }
     }
 }

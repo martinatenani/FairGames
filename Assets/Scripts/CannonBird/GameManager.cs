@@ -19,6 +19,8 @@ namespace CannonBird
         [SerializeField] private ForceMode fireForceMode = ForceMode.Impulse;
         
         [SerializeField] GameObject brick;
+        private int _numBricksOnScene = 0;
+        
         [SerializeField] Texture2D[] maps;
         private Texture2D _currentMap;
         [SerializeField] private GameObject cannon;
@@ -60,8 +62,9 @@ namespace CannonBird
         {
             _inputActions.Enable();
             _inputActions.UI.Quit.performed += OnQuit;
+            BrickManager.OnDestroyed += HandleOnBrickDestroyed;
         }
-        
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
@@ -88,6 +91,8 @@ namespace CannonBird
                             startPosition.up * (j * deltaY);
 
                         go.transform.position = startPosition.position + offset;
+
+                        _numBricksOnScene++;
                     }
                 }
             }
@@ -139,6 +144,15 @@ namespace CannonBird
                 boomImage.SetActive(true);
                 energyText.text = "";
             }
+        }
+        
+        private void HandleOnBrickDestroyed()
+        {
+            if (_numBricksOnScene <1)
+            {
+                Debug.Log("Game over");
+            }
+            _numBricksOnScene--;
         }
         
         private void OnDisable()
