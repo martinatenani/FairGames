@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Animations;
 using Object = UnityEngine.Object;
 
 namespace CannonBird
@@ -79,7 +80,7 @@ namespace CannonBird
         {
             if (floatAway)
             {
-                transform.position += transform.up * 0.001f;
+                transform.position += new Vector3(0,1,0) * 0.001f;
             }
         }
 
