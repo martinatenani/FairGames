@@ -9,6 +9,7 @@ namespace CannonBird
     public class GameManager : MonoBehaviour
     {
         //[SerializeField] TMP_Text energyText;
+        [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private Slider energyUI;
         [SerializeField] GameObject[] bullets;
         [SerializeField] float destroyBulletAfterDelay = 1;
@@ -128,7 +129,7 @@ namespace CannonBird
             {
                 _fireForce = 0;
                 //energyText.text = "";
-                //energyUI.SetActive(true);
+                UpdateProgress(_fireForce);
             }else if (_fireAction.IsPressed())
             {
                 _fireForce = Mathf.Clamp(_fireForce + Time.deltaTime * fireIncreaseSpeed,0,_fireForce + Time.deltaTime * fireIncreaseSpeed);
@@ -159,11 +160,12 @@ namespace CannonBird
         
         private void HandleOnBrickDestroyed()
         {
+            _numBricksOnScene--;
+            Debug.Log($"{_numBricksOnScene}");
             if (_numBricksOnScene <1)
             {
-                Debug.Log("Game over");
+                gameOverText.text = "Game over";
             }
-            _numBricksOnScene--;
         }
         
         private void OnDisable()
