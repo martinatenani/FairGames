@@ -2,12 +2,14 @@ using TMPro;
 using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace CannonBird
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] TMP_Text energyText;
+        //[SerializeField] TMP_Text energyText;
+        [SerializeField] private Slider energyUI;
         [SerializeField] GameObject[] bullets;
         [SerializeField] float destroyBulletAfterDelay = 1;
         [SerializeField] Transform fireTransform;
@@ -96,6 +98,13 @@ namespace CannonBird
                     }
                 }
             }
+            
+            //energyUI.SetActive(false);
+        }
+
+        private void UpdateProgress(float progress)
+        {
+            energyUI.value = progress/fireMaxForce;
         }
 
         private void OnMove(InputValue context)
@@ -118,11 +127,13 @@ namespace CannonBird
             if (_fireAction.WasPressedThisFrame())
             {
                 _fireForce = 0;
-                energyText.text = "";
+                //energyText.text = "";
+                //energyUI.SetActive(true);
             }else if (_fireAction.IsPressed())
             {
                 _fireForce = Mathf.Clamp(_fireForce + Time.deltaTime * fireIncreaseSpeed,0,_fireForce + Time.deltaTime * fireIncreaseSpeed);
-                energyText.text = $"Energy:{(int)_fireForce}";
+                //energyText.text = $"Energy:{(int)_fireForce}";
+                UpdateProgress(_fireForce);
             }else if (_fireAction.WasReleasedThisFrame())
             {
                 GameObject go = Instantiate(bullets[Random.Range(0,bullets.Length)]);
@@ -141,7 +152,8 @@ namespace CannonBird
                 Destroy(go,destroyBulletAfterDelay);
                 
                 boomImage.SetActive(true);
-                energyText.text = "";
+                //energyText.text = "";
+                UpdateProgress(0);
             }
         }
         
