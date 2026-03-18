@@ -31,7 +31,6 @@ namespace CannonBird
                 Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
                     new Vector3(.5f, 10f, .5f),
                     Quaternion.identity);
-                Instantiate(_explosionPrefab);
                 foreach (Collider c in hits)
                 {
                     if (c.TryGetComponent(out Rigidbody rb))

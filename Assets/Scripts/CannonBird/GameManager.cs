@@ -8,7 +8,7 @@ namespace CannonBird
     public class GameManager : MonoBehaviour
     {
         [SerializeField] TMP_Text energyText;
-        [SerializeField] GameObject bullet;
+        [SerializeField] GameObject[] bullets;
         [SerializeField] float destroyBulletAfterDelay = 1;
         [SerializeField] Transform fireTransform;
         [SerializeField] float fireMaxForce = 500f;
@@ -125,7 +125,7 @@ namespace CannonBird
                 energyText.text = $"Energy:{(int)_fireForce}";
             }else if (_fireAction.WasReleasedThisFrame())
             {
-                GameObject go = Instantiate(bullet);
+                GameObject go = Instantiate(bullets[Random.Range(0,bullets.Length)]);
                 go.transform.position = fireTransform.position;
                 go.transform.rotation = _cannonParentRotation;
 

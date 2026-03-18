@@ -4354,7 +4354,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   energyText: {fileID: 1703595994}
-  bullet: {fileID: 3225714576487180454, guid: 556dfe8fa1466b843b00d6fe0bd79b6d, type: 3}
+  bullets:
+  - {fileID: 3225714576487180454, guid: e217e83b93779544c85b0223a15cdd50, type: 3}
+  - {fileID: 7296010194681676985, guid: 6ff5af6c1dff75b4587b4d47bd846007, type: 3}
+  - {fileID: 4914841318765170585, guid: d71f7e2eb91748d43aedf3e7c6725dfd, type: 3}
+  - {fileID: 3017348832192878107, guid: 73dd63cd202941e4089f616c9de3ffe8, type: 3}
   destroyBulletAfterDelay: 1
   fireTransform: {fileID: 1500326485}
   fireMaxForce: 50
