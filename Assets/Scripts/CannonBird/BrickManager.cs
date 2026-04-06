@@ -30,17 +30,17 @@ namespace CannonBird
             }else if (collision.gameObject.CompareTag("Bomb"))
             {
                 Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
-                    new Vector3(.5f, 10f, .5f),
+                    new Vector3(30f, 30f, .30f),
                     Quaternion.identity);
                 foreach (Collider c in hits)
                 {
                     if (c.TryGetComponent(out Rigidbody rb))
                     {
                         rb.isKinematic = false;
-                        rb.AddExplosionForce(100f,transform.position+new Vector3(0,5,0),10f);
+                        rb.AddExplosionForce(700f,collision.transform.position,100f);
                     } //to avoid using layers
                 }
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }else if(collision.gameObject.CompareTag("Shrink"))
             {
                 Collider[] hits = Physics.OverlapBox(transform.position + new Vector3(0, 5, 0),
@@ -55,7 +55,7 @@ namespace CannonBird
                 }
                 gameObject.transform.localScale += new Vector3(-0.1f,-0.1f,-0.1f);
 
-                if (gameObject.transform.localScale.x < 0.3f)
+                if (gameObject.transform.localScale.x < 0.05f)
                 {
                     Destroy(gameObject);
                 }

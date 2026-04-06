@@ -9,14 +9,18 @@ TagManager:
   - Bomb
   - Shrink
   - Float
+  - Mina
+  - Box
+  - SubBullet
+  - Submarine
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - SubBullet
   - Water
   - UI
-  - 
+  - Submarine
   - 
   - 
   - 

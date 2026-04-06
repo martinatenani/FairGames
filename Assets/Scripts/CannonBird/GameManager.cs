@@ -1,20 +1,33 @@
+using System;
 using TMPro;
 using Unity.Mathematics.Geometry;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace CannonBird
 {
+    [Serializable]
+    public class ColorObject
+    {
+        [SerializeField] Color color;
+        [SerializeField] GameObject go;
+
+        public Color Color => color;
+        public GameObject GameObject => go;
+    }
     public class GameManager : MonoBehaviour
     {
         //[SerializeField] TMP_Text energyText;
         [SerializeField] private TMP_Text gameOverText;
+        [SerializeField] private ColorObject[] colors;
+        
         [SerializeField] private Slider energyUI;
         [SerializeField] GameObject[] bullets;
-        [SerializeField] float destroyBulletAfterDelay = 1;
+        [SerializeField] float destroyBulletAfterDelay = .1f;
         [SerializeField] Transform fireTransform;
-        [SerializeField] float fireMaxForce = 500f;
+        [SerializeField] float fireMaxForce = 20f;
         [SerializeField] private float fireIncreaseSpeed = 50;
         
         private float _fireForce = 0;
@@ -78,11 +91,13 @@ namespace CannonBird
             
             _currentMap = maps[Random.Range(0,maps.Length)];
             
+            Debug.Log("W: "+ $"{_currentMap.width}" + "H: "+ $"{_currentMap.height}");
+            
             for (int i = 0; i < _currentMap.width; i++)
             {
                 for (int j = 0; j < _currentMap.height; j++)
                 {
-                    if (_currentMap.GetPixel(i, j).r == 0)
+                    if (_currentMap.GetPixel(i, j)==Color.black) //rischioso
                     {
                         Debug.Log($"{_currentMap.GetPixel(i, j)} found...");
                         GameObject go = Instantiate(brick);
@@ -105,7 +120,7 @@ namespace CannonBird
 
         private void UpdateProgress(float progress)
         {
-            energyUI.value = progress/fireMaxForce;
+            energyUI.value = Mathf.Clamp01(progress/fireMaxForce);
         }
 
         private void OnMove(InputValue context)
